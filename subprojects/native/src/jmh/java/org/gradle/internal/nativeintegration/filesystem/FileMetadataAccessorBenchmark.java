@@ -17,9 +17,8 @@ package org.gradle.internal.nativeintegration.filesystem;
 
 import com.google.common.collect.ImmutableMap;
 import net.rubygrapefruit.platform.file.Files;
-import org.gradle.internal.file.FileMetadataSnapshot;
-import org.gradle.internal.file.FileType;
 import org.gradle.internal.nativeintegration.filesystem.jdk7.Jdk7FileMetadataAccessor;
+import org.gradle.internal.nativeintegration.filesystem.jdk7.NioFileMetadataAccessor;
 import org.gradle.internal.nativeintegration.filesystem.services.FallbackFileMetadataAccessor;
 import org.gradle.internal.nativeintegration.filesystem.services.NativePlatformBackedFileMetadataAccessor;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -37,7 +36,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.UUID;
 
@@ -110,34 +108,5 @@ public class FileMetadataAccessorBenchmark {
     @Benchmark
     public void stat_existing(Blackhole bh) throws IOException {
         bh.consume(getAccessor(accessorClassName).stat(realFilePath));
-    }
-
-    private static class NioFileMetadataAccessor implements FileMetadataAccessor {
-
-        @Override
-        public FileMetadataSnapshot stat(File f) {
-            try {
-                BasicFileAttributes bfa = java.nio.file.Files.readAttributes(f.toPath(), BasicFileAttributes.class);
-                if (bfa.isDirectory()) {
-                    return DefaultFileMetadata.directory();
-                }
-                return new DefaultFileMetadata(FileType.RegularFile, bfa.lastModifiedTime().toMillis(), bfa.size());
-            } catch (IOException e) {
-                return DefaultFileMetadata.missing();
-            }
-        }
-
-        @Override
-        public FileMetadataSnapshot stat(Path path) throws IOException {
-            try {
-                BasicFileAttributes bfa = java.nio.file.Files.readAttributes(path, BasicFileAttributes.class);
-                if (bfa.isDirectory()) {
-                    return DefaultFileMetadata.directory();
-                }
-                return new DefaultFileMetadata(FileType.RegularFile, bfa.lastModifiedTime().toMillis(), bfa.size());
-            } catch (IOException e) {
-                return DefaultFileMetadata.missing();
-            }
-        }
     }
 }
