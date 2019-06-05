@@ -33,6 +33,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Unroll
 
+import static org.gradle.internal.work.AsyncWorkTracker.ProjectLockRetention.RETAIN_PROJECT_LOCKS
+
 @UsesNativeServices
 class DefaultWorkerExecutorParallelTest extends ConcurrentSpec {
     @Rule
@@ -87,7 +89,7 @@ class DefaultWorkerExecutorParallelTest extends ConcurrentSpec {
         workerExecutor.await()
 
         then:
-        1 * asyncWorkerTracker.waitForCompletion(_, false)
+        1 * asyncWorkerTracker.waitForCompletion(_, RETAIN_PROJECT_LOCKS)
     }
 
     def "all errors are thrown when waiting on multiple results"() {
@@ -95,7 +97,7 @@ class DefaultWorkerExecutorParallelTest extends ConcurrentSpec {
         workerExecutor.await()
 
         then:
-        1 * asyncWorkerTracker.waitForCompletion(_, false) >> {
+        1 * asyncWorkerTracker.waitForCompletion(_, RETAIN_PROJECT_LOCKS) >> {
             throw new DefaultMultiCauseException(null, new RuntimeException(), new RuntimeException())
         }
 
