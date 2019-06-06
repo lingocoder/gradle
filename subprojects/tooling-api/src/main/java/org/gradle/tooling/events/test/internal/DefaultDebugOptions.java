@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package org.gradle.tooling.internal.protocol.test;
+package org.gradle.tooling.events.test.internal;
 
-/**
- * Specifies a method to be tested.
- *
- * DO NOT CHANGE THIS INTERFACE. It is part of the cross-version protocol.
- *
- * @since 5.6
- */
-public interface InternalDebugOptionsRequest {
-    boolean isDebugMode();
-    int getPort();
+import org.gradle.tooling.internal.protocol.test.InternalDebugOptions;
+
+public class DefaultDebugOptions implements InternalDebugOptions {
+
+    private int port = -1;
+
+    @Override
+    public int getPort() {
+        return this.port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public boolean isDebugMode() {
+        return port > 0;
+    }
 }

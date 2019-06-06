@@ -30,7 +30,7 @@ import org.gradle.tooling.internal.protocol.events.InternalTestDescriptor;
 import org.gradle.tooling.internal.protocol.test.InternalJvmTestRequest;
 import org.gradle.tooling.internal.provider.TestExecutionRequestAction;
 import org.gradle.tooling.internal.provider.events.DefaultTestDescriptor;
-import org.gradle.tooling.internal.protocol.test.InternalDebugOptionsRequest;
+import org.gradle.tooling.internal.protocol.test.InternalDebugOptions;
 
 import java.util.*;
 
@@ -58,7 +58,7 @@ class TestExecutionBuildConfigurationAction implements BuildConfigurationAction 
             task.setIgnoreFailures(true);
             task.getFilter().setFailOnNoMatchingTests(false);
             task.getOutputs().upToDateWhen(Specs.SATISFIES_NONE);
-            InternalDebugOptionsRequest debugOptions = testExecutionRequest.getDebugOptions();
+            InternalDebugOptions debugOptions = testExecutionRequest.getDebugOptions();
             if (debugOptions.isDebugMode()) {
                 // TODO (donat) remove existing debug options from JVM arguments
                 List<String> jvmArgs = new ArrayList<>(task.getJvmArgs().size() + 1);

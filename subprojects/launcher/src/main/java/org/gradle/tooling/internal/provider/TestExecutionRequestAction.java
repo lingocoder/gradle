@@ -19,9 +19,8 @@ package org.gradle.tooling.internal.provider;
 import com.google.common.collect.ImmutableSet;
 import org.gradle.api.Transformer;
 import org.gradle.api.internal.StartParameterInternal;
-import org.gradle.tooling.events.test.internal.DefaultDebugOptionsDescriptor;
 import org.gradle.tooling.internal.protocol.events.InternalTestDescriptor;
-import org.gradle.tooling.internal.protocol.test.InternalDebugOptionsRequest;
+import org.gradle.tooling.internal.protocol.test.InternalDebugOptions;
 import org.gradle.tooling.internal.protocol.test.InternalJvmTestRequest;
 import org.gradle.tooling.internal.provider.test.ProviderInternalJvmTestRequest;
 import org.gradle.tooling.internal.provider.test.ProviderInternalTestExecutionRequest;
@@ -37,9 +36,9 @@ public class TestExecutionRequestAction extends SubscribableBuildAction {
     private final Set<InternalTestDescriptor> testDescriptors;
     private final Set<String> classNames;
     private final Set<InternalJvmTestRequest> internalJvmTestRequests;
-    private final InternalDebugOptionsRequest debugOptions;
+    private final InternalDebugOptions debugOptions;
 
-    private TestExecutionRequestAction(BuildClientSubscriptions clientSubscriptions, StartParameterInternal startParameter, Set<InternalTestDescriptor> testDescriptors, Set<String> providerClassNames, Set<InternalJvmTestRequest> internalJvmTestRequests, InternalDebugOptionsRequest debugOptions) {
+    private TestExecutionRequestAction(BuildClientSubscriptions clientSubscriptions, StartParameterInternal startParameter, Set<InternalTestDescriptor> testDescriptors, Set<String> providerClassNames, Set<InternalJvmTestRequest> internalJvmTestRequests, InternalDebugOptions debugOptions) {
         super(clientSubscriptions);
         this.startParameter = startParameter;
         this.testDescriptors = testDescriptors;
@@ -97,7 +96,7 @@ public class TestExecutionRequestAction extends SubscribableBuildAction {
         return testDescriptors;
     }
 
-    public InternalDebugOptionsRequest getDebugOptions() {
+    public InternalDebugOptions getDebugOptions() {
         return debugOptions;
     }
 }
