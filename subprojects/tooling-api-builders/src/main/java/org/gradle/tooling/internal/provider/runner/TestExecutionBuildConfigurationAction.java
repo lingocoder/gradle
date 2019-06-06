@@ -60,11 +60,7 @@ class TestExecutionBuildConfigurationAction implements BuildConfigurationAction 
             task.getOutputs().upToDateWhen(Specs.SATISFIES_NONE);
             InternalDebugOptions debugOptions = testExecutionRequest.getDebugOptions();
             if (debugOptions.isDebugMode()) {
-                // TODO (donat) remove existing debug options from JVM arguments
-                List<String> jvmArgs = new ArrayList<>(task.getJvmArgs().size() + 1);
-                jvmArgs.addAll(task.getJvmArgs());
-                jvmArgs.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugOptions.getPort());
-                task.setJvmArgs(jvmArgs);
+                task.setDebugOptions("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugOptions.getPort());
             }
         }
     }

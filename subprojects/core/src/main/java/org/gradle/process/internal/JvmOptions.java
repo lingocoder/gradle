@@ -66,6 +66,7 @@ public class JvmOptions {
     private String maxHeapSize;
     private boolean assertionsEnabled;
     private boolean debug;
+    private String debugOptions;
 
     protected final Map<String, Object> immutableSystemProperties = new TreeMap<String, Object>();
 
@@ -135,7 +136,10 @@ public class JvmOptions {
         if (assertionsEnabled) {
             args.add("-ea");
         }
-        if (debug) {
+
+        if (debugOptions != null) {
+            args.add(debugOptions);
+        } else if (debug) {
             args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
         }
         return args;
@@ -308,6 +312,10 @@ public class JvmOptions {
         debug = enabled;
     }
 
+    public void setDebugOptions(String debugOptions) {
+        this.debugOptions = debugOptions;
+    }
+
     public void copyTo(JavaForkOptions target) {
         target.setJvmArgs(extraJvmArgs);
         target.setSystemProperties(mutableSystemProperties);
@@ -316,6 +324,7 @@ public class JvmOptions {
         target.setBootstrapClasspath(getBootstrapClasspath());
         target.setEnableAssertions(assertionsEnabled);
         target.setDebug(debug);
+        target.setDebugOptions(debugOptions);
         target.systemProperties(immutableSystemProperties);
     }
 
@@ -330,6 +339,7 @@ public class JvmOptions {
         }
         target.setEnableAssertions(assertionsEnabled);
         target.setDebug(debug);
+        target.setDebugOptions(debugOptions);
         target.systemProperties(immutableSystemProperties);
         return target;
     }

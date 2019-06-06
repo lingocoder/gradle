@@ -208,6 +208,11 @@ public class DefaultJavaForkOptions extends DefaultProcessForkOptions implements
     }
 
     @Override
+    public void setDebugOptions(String debugOptions) {
+        options.setDebugOptions(debugOptions);
+    }
+
+    @Override
     public JavaForkOptions copyTo(JavaForkOptions target) {
         super.copyTo(target);
         options.copyTo(target);

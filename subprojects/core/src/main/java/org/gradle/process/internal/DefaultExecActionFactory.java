@@ -354,6 +354,11 @@ public class DefaultExecActionFactory implements ExecFactory {
         }
 
         @Override
+        public void setDebugOptions(String debugOptions) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public List<String> getAllJvmArgs() {
             return ImmutableList.copyOf(delegate.getAllJvmArgs());
         }
