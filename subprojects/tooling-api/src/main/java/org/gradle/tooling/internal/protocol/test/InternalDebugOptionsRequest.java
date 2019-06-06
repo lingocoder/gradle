@@ -21,10 +21,9 @@ package org.gradle.tooling.internal.protocol.test;
  *
  * DO NOT CHANGE THIS INTERFACE. It is part of the cross-version protocol.
  *
- * @since 2.7-rc-1
+ * @since 5.6
  */
 public interface InternalDebugOptionsRequest {
     boolean isDebugMode();
     int getPort();
-    boolean isSuspend();
 }

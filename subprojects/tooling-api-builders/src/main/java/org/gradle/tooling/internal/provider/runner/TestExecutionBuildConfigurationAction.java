@@ -63,7 +63,7 @@ class TestExecutionBuildConfigurationAction implements BuildConfigurationAction 
                 // TODO (donat) remove existing debug options from JVM arguments
                 List<String> jvmArgs = new ArrayList<>(task.getJvmArgs().size() + 1);
                 jvmArgs.addAll(task.getJvmArgs());
-                jvmArgs.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (debugOptions.isSuspend() ? "y" : "n") + ",address=" + debugOptions.getPort());
+                jvmArgs.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugOptions.getPort());
                 task.setJvmArgs(jvmArgs);
             }
         }

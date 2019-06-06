@@ -17,6 +17,7 @@
 package org.gradle.tooling;
 
 import org.gradle.tooling.events.test.TestOperationDescriptor;
+import org.gradle.tooling.model.UnsupportedMethodException;
 
 /**
  *
@@ -82,7 +83,14 @@ public interface TestLauncher extends ConfigurableLauncher<TestLauncher> {
      */
     TestLauncher withJvmTestMethods(String testClass, Iterable<String> methods);
 
-    TestLauncher withDebugOptions(int port, boolean suspend);
+    /**
+     * Runs the tests in debug mode.
+     * @param port
+     * @return this
+     *
+     * @since 5.6
+     */
+    TestLauncher withDebugOptions(int port);
 
     /**
      * Executes the tests, blocking until complete.

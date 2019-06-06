@@ -21,7 +21,6 @@ import org.gradle.tooling.internal.protocol.test.InternalDebugOptionsRequest;
 public class DefaultDebugOptionsDescriptor implements InternalDebugOptionsRequest {
 
     private int port = -1;
-    private boolean suspend = false;
 
     @Override
     public int getPort() {
@@ -35,14 +34,5 @@ public class DefaultDebugOptionsDescriptor implements InternalDebugOptionsReques
     @Override
     public boolean isDebugMode() {
         return port > 0;
-    }
-
-    @Override
-    public boolean isSuspend() {
-        return suspend;
-    }
-
-    public void setSuspend(boolean suspend) {
-        this.suspend = suspend;
     }
 }

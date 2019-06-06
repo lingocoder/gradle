@@ -19,20 +19,29 @@ package org.gradle.integtests.tooling.r56
 import org.gradle.integtests.tooling.TestLauncherSpec
 import org.gradle.integtests.tooling.fixture.TargetGradleVersion
 import org.gradle.integtests.tooling.fixture.ToolingApiVersion
+import org.gradle.test.fixtures.ConcurrentTestUtil
 import org.gradle.tooling.TestLauncher
 
 
-@ToolingApiVersion("current")
-@TargetGradleVersion("current")
+@ToolingApiVersion(">=5.6")
+@TargetGradleVersion(">=5.6")
 class TestLauncherDebuggingCrossVersionTest extends TestLauncherSpec {
+
     def "can launch tests in debug mode"() {
         when:
-        launchTests { TestLauncher launcher ->
-
-            launcher.withJvmTestMethods("example.MyTest", "foo").withDebugOptions(4008, false)
+        Thread.start {
+            launchTests { TestLauncher launcher ->
+                launcher.withJvmTestMethods("example.MyTest", "foo").withDebugOptions(4008)
+            }
         }
 
         then:
-        stdout.toString().contains("Listening for transport dt_socket at address: 4008")
+        ConcurrentTestUtil.poll {
+            assert stdout.toString().contains("Listening for transport dt_socket at address: 4008")
+        }
     }
+
+    // TODO test cancellation
+    // TODO test what happens in port is taken
+    // TODO test what happens if the test configuration already contains debug options
 }
