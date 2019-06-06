@@ -65,6 +65,7 @@ public class DefaultSwiftBinary extends DefaultNativeBinary implements SwiftBina
     private final FileCollection source;
     private final FileCollection compileModules;
     private final Configuration linkLibs;
+    private final Configuration linkLibsPath;
     private final Configuration runtimeLibs;
     private final RegularFileProperty moduleFile;
     private final Property<SwiftCompile> compileTaskProperty;
@@ -72,6 +73,7 @@ public class DefaultSwiftBinary extends DefaultNativeBinary implements SwiftBina
     private final NativeToolChainInternal toolChain;
     private final PlatformToolProvider platformToolProvider;
     private final Configuration importPathConfiguration;
+    private final Configuration importPathPathConfiguration;
 
     public DefaultSwiftBinary(Names names, final ObjectFactory objectFactory, Provider<String> module, boolean testable, FileCollection source, ConfigurationContainer configurations, Configuration componentImplementation, SwiftPlatform targetPlatform, NativeToolChainInternal toolChain, PlatformToolProvider platformToolProvider, NativeVariantIdentity identity) {
         super(names, objectFactory, componentImplementation);
@@ -86,22 +88,31 @@ public class DefaultSwiftBinary extends DefaultNativeBinary implements SwiftBina
 
         // TODO - reduce duplication with C++ binary
         importPathConfiguration = configurations.create(names.withPrefix("swiftCompile"));
-        importPathConfiguration.extendsFrom(getImplementationDependencies());
         importPathConfiguration.setCanBeConsumed(false);
-        importPathConfiguration.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objectFactory.named(Usage.class, Usage.SWIFT_API));
-        importPathConfiguration.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
-        importPathConfiguration.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
-        importPathConfiguration.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
-        importPathConfiguration.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
+        importPathConfiguration.setCanBeResolved(false);
 
-        Configuration nativeLink = configurations.create(names.withPrefix("nativeLink"));
-        nativeLink.extendsFrom(getImplementationDependencies());
-        nativeLink.setCanBeConsumed(false);
-        nativeLink.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objectFactory.named(Usage.class, Usage.NATIVE_LINK));
-        nativeLink.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
-        nativeLink.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
-        nativeLink.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
-        nativeLink.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
+        importPathPathConfiguration = configurations.create(names.withPrefix("swiftCompilePath"));
+        importPathPathConfiguration.extendsFrom(importPathConfiguration, getImplementationDependencies());
+        importPathPathConfiguration.setCanBeConsumed(false);
+        importPathPathConfiguration.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objectFactory.named(Usage.class, Usage.SWIFT_API));
+        importPathPathConfiguration.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
+        importPathPathConfiguration.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
+        importPathPathConfiguration.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
+        importPathPathConfiguration.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
+
+        linkLibs = configurations.create(names.withPrefix("nativeLink"));
+        linkLibs.setVisible(false);
+        linkLibs.setCanBeConsumed(false);
+        linkLibs.setCanBeResolved(false);
+
+        Configuration nativeLinkPath = configurations.create(names.withPrefix("nativeLinkPath"));
+        nativeLinkPath.extendsFrom(linkLibs, getImplementationDependencies());
+        nativeLinkPath.setCanBeConsumed(false);
+        nativeLinkPath.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objectFactory.named(Usage.class, Usage.NATIVE_LINK));
+        nativeLinkPath.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
+        nativeLinkPath.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
+        nativeLinkPath.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
+        nativeLinkPath.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
 
         Configuration nativeRuntime = configurations.create(names.withPrefix("nativeRuntime"));
         nativeRuntime.extendsFrom(getImplementationDependencies());
@@ -112,8 +123,8 @@ public class DefaultSwiftBinary extends DefaultNativeBinary implements SwiftBina
         nativeRuntime.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
         nativeRuntime.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
 
-        compileModules = new FileCollectionAdapter(new ModulePath(importPathConfiguration));
-        linkLibs = nativeLink;
+        compileModules = new FileCollectionAdapter(new ModulePath(importPathPathConfiguration));
+        linkLibsPath = nativeLinkPath;
         runtimeLibs = nativeRuntime;
         this.identity = identity;
     }
@@ -155,7 +166,7 @@ public class DefaultSwiftBinary extends DefaultNativeBinary implements SwiftBina
 
     @Override
     public FileCollection getLinkLibraries() {
-        return linkLibs;
+        return linkLibsPath;
     }
 
     public Configuration getLinkConfiguration() {
@@ -174,6 +185,10 @@ public class DefaultSwiftBinary extends DefaultNativeBinary implements SwiftBina
 
     public Configuration getImportPathConfiguration() {
         return importPathConfiguration;
+    }
+
+    public Configuration getImportPathPathConfiguration() {
+        return importPathPathConfiguration;
     }
 
     @Override

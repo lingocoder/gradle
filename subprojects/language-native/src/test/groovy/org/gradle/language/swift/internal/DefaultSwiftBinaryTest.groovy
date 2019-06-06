@@ -46,8 +46,8 @@ class DefaultSwiftBinaryTest extends Specification {
     DefaultSwiftBinary binary
 
     def setup() {
-        _ * configurations.create("swiftCompileDebug") >> compile
-        _ * configurations.create("nativeLinkDebug") >> link
+        _ * configurations.create("swiftCompilePathDebug") >> compile
+        _ * configurations.create("nativeLinkPathDebug") >> link
         _ * configurations.create("nativeRuntimeDebug") >> runtime
 
         binary = new DefaultSwiftBinary(Names.of("mainDebug"), project.objects, Stub(Provider), false, Stub(FileCollection),  configurations, implementation, Stub(SwiftPlatform), Stub(NativeToolChainInternal), Stub(PlatformToolProvider), Stub(NativeVariantIdentity))

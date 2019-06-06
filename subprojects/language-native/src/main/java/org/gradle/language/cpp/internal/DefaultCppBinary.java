@@ -47,11 +47,13 @@ public class DefaultCppBinary extends DefaultNativeBinary implements CppBinary {
     private final FileCollection sourceFiles;
     private final FileCollection includePath;
     private final Configuration linkLibraries;
+    private final Configuration linkLibrariesPath;
     private final FileCollection runtimeLibraries;
     private final CppPlatform targetPlatform;
     private final NativeToolChainInternal toolChain;
     private final PlatformToolProvider platformToolProvider;
     private final Configuration includePathConfiguration;
+    private final Configuration includePathPathConfiguration;
     private final Property<CppCompile> compileTaskProperty;
     private final NativeVariantIdentity identity;
 
@@ -66,24 +68,32 @@ public class DefaultCppBinary extends DefaultNativeBinary implements CppBinary {
         this.identity = identity;
 
         // TODO - reduce duplication with Swift binary
-
         includePathConfiguration = configurations.create(names.withPrefix("cppCompile"));
         includePathConfiguration.setCanBeConsumed(false);
-        includePathConfiguration.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, Usage.C_PLUS_PLUS_API));
-        includePathConfiguration.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
-        includePathConfiguration.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
-        includePathConfiguration.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
-        includePathConfiguration.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
-        includePathConfiguration.extendsFrom(getImplementationDependencies());
+        includePathConfiguration.setCanBeResolved(false);
 
-        Configuration nativeLink = configurations.create(names.withPrefix("nativeLink"));
-        nativeLink.setCanBeConsumed(false);
-        nativeLink.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, Usage.NATIVE_LINK));
-        nativeLink.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
-        nativeLink.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
-        nativeLink.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
-        nativeLink.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
-        nativeLink.extendsFrom(getImplementationDependencies());
+        includePathPathConfiguration = configurations.create(names.withPrefix("cppCompilePath"));
+        includePathPathConfiguration.setCanBeConsumed(false);
+        includePathPathConfiguration.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, Usage.C_PLUS_PLUS_API));
+        includePathPathConfiguration.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
+        includePathPathConfiguration.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
+        includePathPathConfiguration.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
+        includePathPathConfiguration.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
+        includePathPathConfiguration.extendsFrom(includePathConfiguration, getImplementationDependencies());
+
+        linkLibraries = configurations.create(names.withPrefix("nativeLink"));
+        linkLibraries.setVisible(false);
+        linkLibraries.setCanBeConsumed(false);
+        linkLibraries.setCanBeResolved(false);
+
+        Configuration nativeLinkPath = configurations.create(names.withPrefix("nativeLinkPath"));
+        nativeLinkPath.setCanBeConsumed(false);
+        nativeLinkPath.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, Usage.NATIVE_LINK));
+        nativeLinkPath.getAttributes().attribute(DEBUGGABLE_ATTRIBUTE, identity.isDebuggable());
+        nativeLinkPath.getAttributes().attribute(OPTIMIZED_ATTRIBUTE, identity.isOptimized());
+        nativeLinkPath.getAttributes().attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, identity.getTargetMachine().getOperatingSystemFamily());
+        nativeLinkPath.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
+        nativeLinkPath.extendsFrom(linkLibraries, getImplementationDependencies());
 
         Configuration nativeRuntime = configurations.create(names.withPrefix("nativeRuntime"));
         nativeRuntime.setCanBeConsumed(false);
@@ -94,13 +104,13 @@ public class DefaultCppBinary extends DefaultNativeBinary implements CppBinary {
         nativeRuntime.getAttributes().attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, identity.getTargetMachine().getArchitecture());
         nativeRuntime.extendsFrom(getImplementationDependencies());
 
-        ArtifactView includeDirs = includePathConfiguration.getIncoming().artifactView(viewConfiguration -> {
+        ArtifactView includeDirs = includePathPathConfiguration.getIncoming().artifactView(viewConfiguration -> {
            viewConfiguration.attributes(attributeContainer -> {
                attributeContainer.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.DIRECTORY_TYPE);
            });
         });
         includePath = componentHeaderDirs.plus(includeDirs.getFiles());
-        linkLibraries = nativeLink;
+        linkLibrariesPath = nativeLinkPath;
         runtimeLibraries = nativeRuntime;
     }
 
@@ -146,7 +156,7 @@ public class DefaultCppBinary extends DefaultNativeBinary implements CppBinary {
 
     @Override
     public FileCollection getLinkLibraries() {
-        return linkLibraries;
+        return linkLibrariesPath;
     }
 
     public Configuration getLinkConfiguration() {
@@ -160,6 +170,10 @@ public class DefaultCppBinary extends DefaultNativeBinary implements CppBinary {
 
     public Configuration getIncludePathConfiguration() {
         return includePathConfiguration;
+    }
+
+    public Configuration getIncludePathPathConfiguration() {
+        return includePathPathConfiguration;
     }
 
     @Override

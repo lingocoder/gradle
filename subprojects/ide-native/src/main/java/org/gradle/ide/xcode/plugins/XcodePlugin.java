@@ -227,7 +227,7 @@ public class XcodePlugin extends IdePlugin {
                     target.addBinary(DefaultXcodeProject.BUILD_RELEASE, component.getTestBinary().get().getInstallDirectory(), component.getTestBinary().get().getTargetMachine().getArchitecture().getName());
                     target.setProductType(PBXTarget.ProductType.UNIT_TEST);
                     target.getCompileModules().from(component.getTestBinary().get().getCompileModules());
-                    target.addTaskDependency(filterArtifactsFromImplicitBuilds(((DefaultSwiftBinary) component.getTestBinary().get()).getImportPathConfiguration()).getBuildDependencies());
+                    target.addTaskDependency(filterArtifactsFromImplicitBuilds(((DefaultSwiftBinary) component.getTestBinary().get()).getImportPathPathConfiguration()).getBuildDependencies());
                 }
                 component.getBinaries().whenElementFinalized(new Action<SwiftBinary>() {
                     @Override
@@ -275,7 +275,7 @@ public class XcodePlugin extends IdePlugin {
 
                         if (swiftBinary == component.getDevelopmentBinary().get()) {
                             target.getCompileModules().from(component.getDevelopmentBinary().get().getCompileModules());
-                            target.addTaskDependency(filterArtifactsFromImplicitBuilds(((DefaultSwiftBinary) component.getDevelopmentBinary().get()).getImportPathConfiguration()).getBuildDependencies());
+                            target.addTaskDependency(filterArtifactsFromImplicitBuilds(((DefaultSwiftBinary) component.getDevelopmentBinary().get()).getImportPathPathConfiguration()).getBuildDependencies());
 
                             createSchemeTask(project.getTasks(), targetName, xcodeProject);
                         }
@@ -345,7 +345,7 @@ public class XcodePlugin extends IdePlugin {
 
                         if (cppBinary == component.getDevelopmentBinary().get()) {
                             target.getHeaderSearchPaths().from(component.getDevelopmentBinary().get().getCompileIncludePath());
-                            target.getTaskDependencies().add(filterArtifactsFromImplicitBuilds(((DefaultCppBinary) component.getDevelopmentBinary().get()).getIncludePathConfiguration()).getBuildDependencies());
+                            target.getTaskDependencies().add(filterArtifactsFromImplicitBuilds(((DefaultCppBinary) component.getDevelopmentBinary().get()).getIncludePathPathConfiguration()).getBuildDependencies());
 
                             createSchemeTask(project.getTasks(), targetName, xcodeProject);
                         }
