@@ -18,7 +18,9 @@ package org.gradle.tooling.events.test.internal;
 
 import org.gradle.tooling.internal.protocol.test.InternalDebugOptions;
 
-public class DefaultDebugOptions implements InternalDebugOptions {
+import java.io.Serializable;
+
+public class DefaultDebugOptions implements InternalDebugOptions, Serializable {
 
     private int port = -1;
 
