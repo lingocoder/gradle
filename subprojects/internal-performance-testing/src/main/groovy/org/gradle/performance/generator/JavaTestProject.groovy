@@ -35,6 +35,10 @@ enum JavaTestProject {
         "largeJavaMultiProject", GROOVY, 100, 500, '1536m', '256m',
         [assemble: productionFile('largeJavaMultiProject'), test: productionFile('largeJavaMultiProject', 450, 2250, 45000)]
     ),
+    HUGE_JAVA_MULTI_PROJECT(
+        "hugeJavaMultiProject", GROOVY, 20000, 4, '1536m', '4g',
+        [assemble: productionFile('largeJavaMultiProject'), test: productionFile('largeJavaMultiProject', 450, 2250, 45000)]
+    ),
     LARGE_JAVA_MULTI_PROJECT_KOTLIN_DSL(
         "largeJavaMultiProjectKotlinDsl", KOTLIN, 100, 500, '1536m', '256m',
         [assemble: productionFile('largeJavaMultiProject'), test: productionFile('largeJavaMultiProject', 450, 2250, 45000)]

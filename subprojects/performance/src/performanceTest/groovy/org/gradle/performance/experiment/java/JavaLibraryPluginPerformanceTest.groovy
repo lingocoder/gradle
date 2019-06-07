@@ -23,7 +23,7 @@ import org.gradle.performance.results.CrossBuildPerformanceResults
 import org.junit.experimental.categories.Category
 import spock.lang.Unroll
 
-import static org.gradle.performance.generator.JavaTestProject.LARGE_JAVA_MULTI_PROJECT
+import static org.gradle.performance.generator.JavaTestProject.HUGE_JAVA_MULTI_PROJECT
 
 @Category(PerformanceExperiment)
 class JavaLibraryPluginPerformanceTest extends AbstractCrossBuildPerformanceTest {
@@ -64,7 +64,7 @@ class JavaLibraryPluginPerformanceTest extends AbstractCrossBuildPerformanceTest
 
         where:
         testProject                   | warmUpRuns | runs
-        LARGE_JAVA_MULTI_PROJECT      | 2          | 3
+        HUGE_JAVA_MULTI_PROJECT       | 2          | 3
     }
 
     private static BaselineVersion buildBaselineResults(CrossBuildPerformanceResults results, String name) {
