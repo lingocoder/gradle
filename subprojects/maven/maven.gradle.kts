@@ -55,6 +55,10 @@ dependencies {
     testImplementation(project(":snapshots"))
     testImplementation(project(":resourcesHttp"))
     testImplementation(testLibrary("xmlunit"))
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":modelCore")))
+
+    testRuntimeOnly(project(":runtimeApiInfo"))
 
     integTestImplementation(project(":ear"))
     integTestImplementation(testLibrary("jetty"))
@@ -62,17 +66,16 @@ dependencies {
     integTestRuntimeOnly(project(":resourcesSftp"))
     integTestRuntimeOnly(project(":apiMetadata"))
 
+    testFixturesApi(project(":baseServices")) {
+        because("Test fixtures export the Action class")
+    }
+    testFixturesImplementation(project(":coreApi"))
     testFixturesImplementation(project(":internalTesting"))
     testFixturesImplementation(project(":internalIntegTesting"))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core")
-    from(":modelCore")
 }
 
 testFilesCleanup {

@@ -45,13 +45,25 @@ dependencies {
     testImplementation(project(":native"))
     testImplementation(project(":processServices"))
 
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":modelCore")))
+    testImplementation(testFixtures(project(":platformBase")))
+    testRuntimeOnly(project(":runtimeApiInfo"))
+
     integTestImplementation(project(":ear"))
+    integTestImplementation(library("slf4j_api"))
     integTestImplementation(testLibrary("jetty"))
 
     integTestRuntimeOnly(project(":resourcesS3"))
     integTestRuntimeOnly(project(":resourcesSftp"))
     integTestRuntimeOnly(project(":apiMetadata"))
 
+    testFixturesApi(project(":baseServices")) {
+        because("Test fixtures export the Action class")
+    }
+    testFixturesApi(project(":coreApi")) {
+        because("Test fixtures export the RepositoryHandler class")
+    }
     testFixturesImplementation(project(":internalTesting"))
     testFixturesImplementation(project(":internalIntegTesting"))
     testFixturesImplementation(library("slf4j_api"))
@@ -60,12 +72,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core")
-    from(":modelCore")
-    from(":platformBase")
 }
 
 testFilesCleanup {

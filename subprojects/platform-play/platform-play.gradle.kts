@@ -42,29 +42,35 @@ dependencies {
     testImplementation(project(":resources"))
     testImplementation(project(":baseServicesGroovy"))
 
+    testRuntimeOnly(project(":runtimeApiInfo"))
+
     integTestImplementation(library("ant"))
     integTestRuntimeOnly(project(":compositeBuilds"))
     integTestRuntimeOnly(project(":idePlay"))
 
-    testFixturesImplementation(project(":internalIntegTesting"))
+    testFixturesApi(project(":platformBase")) {
+        because("Test fixtures export the Platform class")
+    }
+    testFixturesApi(testFixtures(project(":launcher")))
+    testFixturesApi(testFixtures(project(":core")))
+    testFixturesApi(testFixtures(project(":platformNative")))
+    testFixturesApi(testFixtures(project(":languageJvm")))
+    testFixturesApi(project(":internalIntegTesting"))
+    testFixturesImplementation(project(":internalTesting"))
+    testFixturesImplementation(project(":processServices"))
     testFixturesImplementation(library("commons_io"))
     testFixturesImplementation(library("commons_httpclient"))
+    testFixturesImplementation(library("slf4j_api"))
+    testFixturesApi(testFixtures(project(":languageScala")))
+    testFixturesApi(testFixtures(project(":languageJava")))
+
+    testImplementation(testFixtures(project(":dependencyManagement")))
+    testImplementation(testFixtures(project(":diagnostics")))
+    testImplementation(testFixtures(project(":platformBase")))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core", "testFixtures")
-    from(":platformNative", "testFixtures")
-    from(":languageJvm", "testFixtures")
-    from(":launcher", "testFixtures")
-    from(":languageScala", "integTest")
-    from(":languageJava", "integTest")
-    from(":dependencyManagement")
-    from(":diagnostics")
-    from(":platformBase")
 }
 
 tasks.named<Test>("integTest") {

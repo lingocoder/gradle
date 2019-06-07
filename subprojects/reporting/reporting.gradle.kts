@@ -30,6 +30,11 @@ dependencies {
     testImplementation(project(":processServices"))
     testImplementation(project(":baseServicesGroovy"))
     testImplementation(testLibrary("jsoup"))
+    testImplementation(testFixtures(project(":core")))
+    
+    testRuntimeOnly(project(":runtimeApiInfo"))
+    testRuntimeOnly(project(":workers"))
+    testRuntimeOnly(project(":dependencyManagement"))
 
     integTestRuntimeOnly(project(":codeQuality"))
     integTestRuntimeOnly(project(":jacoco"))
@@ -39,10 +44,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core")
 }
 
 val generatedResourcesDir = gradlebuildJava.generatedResourcesDir

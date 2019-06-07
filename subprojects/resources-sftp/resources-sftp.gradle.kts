@@ -34,6 +34,11 @@ dependencies {
     implementation(library("jsch"))
     implementation(library("commons_io"))
 
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":dependencyManagement")))
+    testImplementation(testFixtures(project(":ivy")))
+    testImplementation(testFixtures(project(":maven")))
+
     integTestImplementation(project(":logging"))
     integTestImplementation(testLibrary("jetty"))
     testLibraries("sshd").forEach { integTestImplementation(it) }
@@ -41,13 +46,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":dependencyManagement")
-    from(":ivy")
-    from(":maven")
-    from(":core")
 }
 
 testFilesCleanup {

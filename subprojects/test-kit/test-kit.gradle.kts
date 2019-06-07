@@ -35,6 +35,7 @@ dependencies {
     runtimeOnly(project(":native"))
 
     testImplementation(library("guava"))
+    testImplementation(testFixtures(project(":core")))
 
     integTestImplementation(project(":native"))
     integTestImplementation(project(":logging"))
@@ -48,10 +49,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core")
 }
 
 tasks.register<IntegrationTest>("crossVersionTests") {

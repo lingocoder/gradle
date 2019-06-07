@@ -24,6 +24,10 @@ dependencies {
     implementation(library("joda"))
 
     testImplementation(library("groovy"))
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":dependencyManagement")))
+    testImplementation(testFixtures(project(":ivy")))
+    testImplementation(testFixtures(project(":maven")))
 
     integTestImplementation(project(":coreApi"))
     integTestImplementation(project(":modelCore"))
@@ -35,9 +39,3 @@ gradlebuildJava {
     moduleType = ModuleType.CORE
 }
 
-testFixtures {
-    from(":core")
-    from(":dependencyManagement")
-    from(":ivy")
-    from(":maven")
-}

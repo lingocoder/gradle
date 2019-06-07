@@ -40,8 +40,19 @@ dependencies {
 
     testImplementation(project(":processServices"))
     testImplementation(project(":resources"))
-    
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":coreApi")))
+
+    testRuntimeOnly(project(":runtimeApiInfo"))
+    testRuntimeOnly(project(":workers"))
+    testRuntimeOnly(project(":dependencyManagement"))
+
+    testFixturesImplementation(project(":baseServices"))
+    testFixturesImplementation(project(":coreApi"))
+    testFixturesImplementation(project(":native"))
     testFixturesImplementation(project(":internalTesting"))
+
+    testFixturesImplementation(library("guava"))
 }
 
 java {
@@ -50,7 +61,3 @@ java {
     }
 }
 
-testFixtures {
-    from(":core")
-    from(":coreApi")
-}

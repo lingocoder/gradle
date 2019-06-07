@@ -16,12 +16,11 @@ dependencies {
     implementation(library("slf4j_api"))
     implementation(library("guava"))
     implementation(library("nativePlatform"))
+
+    testImplementation(testFixtures(project(":core")))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.WORKER
 }
 
-testFixtures {
-    from(":core")
-}

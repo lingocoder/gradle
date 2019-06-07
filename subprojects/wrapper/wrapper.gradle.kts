@@ -28,6 +28,7 @@ dependencies {
     testImplementation(project(":baseServices"))
     testImplementation(project(":native"))
     testImplementation(library("ant"))
+    testImplementation(testFixtures(project(":core")))
 
     integTestImplementation(project(":logging"))
     integTestImplementation(project(":coreApi"))
@@ -42,10 +43,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.WORKER
-}
-
-testFixtures {
-    from(":core")
 }
 
 tasks.register<Jar>("executableJar") {

@@ -12,12 +12,13 @@ dependencies {
     implementation(library("slf4j_api"))
     implementation(library("guava"))
     implementation(library("kryo"))
+
+    testImplementation(testFixtures(project(":core")))
+
+    testFixturesImplementation(project(":baseServices"))
+    testFixturesImplementation(library("slf4j_api"))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.WORKER
-}
-
-testFixtures {
-    from(":core")
 }

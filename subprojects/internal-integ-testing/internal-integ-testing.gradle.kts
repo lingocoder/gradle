@@ -73,14 +73,14 @@ dependencies {
         exclude(module = "groovy-all")
         exclude(module = "slf4j-simple")
     }
+    implementation(testFixtures(project(":core")))
+
+    testRuntimeOnly(project(":runtimeApiInfo"))
+    testRuntimeOnly(project(":workers"))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.INTERNAL
-}
-
-testFixtures {
-    from(":core", "main")
 }
 
 val generatedResourcesDir = gradlebuildJava.generatedResourcesDir

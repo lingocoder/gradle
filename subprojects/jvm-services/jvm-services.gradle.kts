@@ -17,12 +17,10 @@ dependencies {
     testImplementation(project(":files"))
     testImplementation(project(":resources"))
     testImplementation(library("slf4j_api"))
+    testImplementation(testFixtures(project(":core")))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
 }
 
-testFixtures {
-    from(":core")
-}

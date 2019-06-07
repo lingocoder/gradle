@@ -23,8 +23,11 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.GroovySystem;
+import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.classgen.GeneratorContext;
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.control.messages.SimpleMessage;
 import org.codehaus.groovy.tools.javac.JavaAwareCompilationUnit;
@@ -119,6 +122,23 @@ public class ApiGroovyCompiler implements org.gradle.language.base.internal.comp
             @Override
             public GroovyClassLoader getTransformLoader() {
                 return astTransformClassLoader;
+            }
+
+            @Override
+            public void applyToPrimaryClassNodes(PrimaryClassNodeOperation body) throws org.codehaus.groovy.control.CompilationFailedException {
+                final ClassNode[] current = new ClassNode[1];
+                try {
+                    super.applyToPrimaryClassNodes(new PrimaryClassNodeOperation() {
+                        @Override
+                        public void call(SourceUnit source, GeneratorContext context, ClassNode classNode) throws org.codehaus.groovy.control.CompilationFailedException {
+                            current[0] = classNode;
+                            body.call(source, context, classNode);
+
+                        }
+                    });
+                } catch (org.codehaus.groovy.control.CompilationFailedException e) {
+                    throw new RuntimeException("Error while processing class " + current[0].getName(), e);
+                }
             }
         };
 

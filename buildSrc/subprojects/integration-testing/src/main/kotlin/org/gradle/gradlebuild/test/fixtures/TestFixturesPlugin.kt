@@ -20,11 +20,10 @@ import accessors.java
 import library
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.gradle.api.plugins.JavaTestFixturesPlugin
 import testLibrary
 import java.util.Locale
 
@@ -44,13 +43,9 @@ import java.util.Locale
 open class TestFixturesPlugin : Plugin<Project> {
 
     override fun apply(project: Project): Unit = project.run {
-        extensions.create<TestFixturesExtension>("testFixtures")
-
         if (file("src/testFixtures").isDirectory) {
             configureAsProducer()
         }
-
-        configureAsConsumer()
     }
 
     /**
@@ -58,67 +53,27 @@ open class TestFixturesPlugin : Plugin<Project> {
      */
     private
     fun Project.configureAsProducer() {
-        val main by java.sourceSets
-        val testFixtures by java.sourceSets.creating {
-            extendsFrom(main, configurations)
-        }
-        java.sourceSets.named("test", SourceSet::class) {
-            extendsFrom(testFixtures, configurations)
-        }
+        project.pluginManager.apply(JavaTestFixturesPlugin::class.java)
 
         java.sourceSets.matching { it.name.toLowerCase(Locale.ROOT).endsWith("test") }.all {
-            compileClasspath += testFixtures.output
-            runtimeClasspath += testFixtures.output
-        }
-
-        configurations {
-            val testFixturesApi by creating
-            val testFixturesImplementation by getting {
-                extendsFrom(testFixturesApi)
-            }
-            val testFixturesRuntimeOnly by getting
-
-            create(testFixtures.apiElementsConfigurationName) {
-                extendsFrom(testFixturesApi)
-                /*
-                 * FIXME only the classes would be more appropriate here, but the Groovy compiler
-                 * needs resources too because we make use of extension methods registered through
-                 * a META-INF file.
-                 */
-                afterEvaluate {
-                    testFixtures.output.forEach {
-                        outgoing.artifact(it) {
-                            builtBy(testFixtures.output)
-                        }
-                    }
-                }
-            }
-
-            create(testFixtures.runtimeElementsConfigurationName) {
-                extendsFrom(testFixturesImplementation, testFixturesRuntimeOnly)
-                /*
-                 * FIXME a JAR would be more appropriate here, but the PlayApp fixture assumes that
-                 * its class is loaded from a directory.
-                 */
-                afterEvaluate {
-                    testFixtures.output.forEach {
-                        outgoing.artifact(it) {
-                            builtBy(testFixtures.output)
-                        }
-                    }
-                }
+            if (name != "test") {
+                // the main test source set is already configured to use test fixtures by the Java test fixtures plugin
+                configurations.findByName(implementationConfigurationName)!!.dependencies.add(
+                    dependencies.testFixtures(project)
+                )
             }
         }
+
+        val testFixtures by java.sourceSets.getting
 
         removeTestFixturesFromArchivesConfiguration()
 
-        dependencies {
-            val testFixturesApi by configurations
-            val testFixturesImplementation by configurations
-            val testFixturesRuntimeOnly by configurations
+        val testFixturesApi by configurations
+        val testFixturesImplementation by configurations
+        val testFixturesRuntimeOnly by configurations
 
-            // add the implementation code as 'test api' of the project providing the fixtues
-            testFixturesApi(project(path))
+        dependencies {
+            testFixturesApi(project(":internalTesting"))
             // add a set of default dependencies for fixture implementation
             testFixturesImplementation(library("junit"))
             testFixturesImplementation(library("groovy"))
@@ -133,33 +88,6 @@ open class TestFixturesPlugin : Plugin<Project> {
                     testSourceDirs = testSourceDirs + testFixtures.groovy.srcDirs
                     testResourceDirs = testResourceDirs + testFixtures.resources.srcDirs
                 }
-            }
-        }
-    }
-
-    private
-    fun SourceSet.extendsFrom(other: SourceSet, configurations: ConfigurationContainer) {
-        configurations {
-            implementationConfigurationName {
-                extendsFrom(configurations[other.implementationConfigurationName])
-            }
-            runtimeOnlyConfigurationName {
-                extendsFrom(configurations[other.runtimeOnlyConfigurationName])
-            }
-        }
-    }
-
-    private
-    fun Project.configureAsConsumer() = afterEvaluate {
-        the<TestFixturesExtension>().origins.forEach { (projectPath, sourceSetName) ->
-            val sourceSet = java.sourceSets[sourceSetName]
-            val implementationConfig = sourceSet.implementationConfigurationName
-            val runtimeOnlyConfig = sourceSet.runtimeOnlyConfigurationName
-
-            dependencies {
-                implementationConfig(project(path = projectPath, configuration = "testFixturesApiElements"))
-                implementationConfig(project(":internalTesting"))
-                runtimeOnlyConfig(project(path = projectPath, configuration = "testFixturesRuntimeElements"))
             }
         }
     }

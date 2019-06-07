@@ -37,17 +37,16 @@ dependencies {
     implementation(library("groovy"))
     implementation(library("guava"))
 
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":platformPlay")))
+    testImplementation(testFixtures(project(":ide")))
+    
     integTestRuntimeOnly(project(":compositeBuilds"))
+    integTestRuntimeOnly(project(":runtimeApiInfo"))
 }
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core")
-    from(":platformPlay")
-    from(":ide")
 }
 
 tasks.withType<IntegrationTest>().configureEach {

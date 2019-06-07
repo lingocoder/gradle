@@ -35,6 +35,8 @@ dependencies {
     implementation(library("groovy"))
     implementation(library("guava"))
 
+    testImplementation(testFixtures(project(":resourcesHttp")))
+
     integTestImplementation(project(":baseServicesGroovy"))
 
     integTestRuntimeOnly(project(":plugins"))
@@ -52,6 +54,3 @@ testFilesCleanup {
     policy.set(WhenNotEmpty.REPORT)
 }
 
-testFixtures {
-    from(":resourcesHttp")
-}

@@ -42,8 +42,22 @@ dependencies {
 
     testImplementation(project(":baseServicesGroovy"))
     testImplementation(library("commons_io"))
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":platformBase")))
+    testImplementation(testFixtures(project(":launcher")))
 
+    testRuntimeOnly(project(":runtimeApiInfo"))
+    
+    testFixturesApi(testFixtures(project(":languageJvm")))
+    testFixturesImplementation(project(":baseServices"))
+    testFixturesImplementation(project(":core"))
+    testFixturesImplementation(project(":coreApi"))
+    testFixturesImplementation(project(":modelCore"))
+    testFixturesImplementation(project(":internalTesting"))
     testFixturesImplementation(project(":internalIntegTesting"))
+    testFixturesImplementation(project(":platformBase"))
+    testFixturesImplementation(project(":persistentCache"))
+    testFixturesImplementation(library("slf4j_api"))
 
     // TODO - get rid of this cycle
     integTestRuntimeOnly(project(":plugins"))
@@ -51,13 +65,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core")
-    from(":languageJvm", "testFixtures")
-    from(":platformBase")
-    from(":launcher")
 }
 
 classycle {

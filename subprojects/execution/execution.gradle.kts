@@ -45,6 +45,16 @@ dependencies {
     testImplementation(project(":modelCore"))
     testImplementation(project(":baseServicesGroovy"))
     testImplementation(project(":resources"))
+    testImplementation(testFixtures(project(":baseServices")))
+    testImplementation(testFixtures(project(":files")))
+    testImplementation(testFixtures(project(":messaging")))
+    testImplementation(testFixtures(project(":snapshots")))
+    testImplementation(testFixtures(project(":core")))
+
+    testFixturesImplementation(library("guava"))
+    testFixturesImplementation(project(":baseServices"))
+    testFixturesImplementation(project(":buildCache"))
+    testFixturesImplementation(project(":snapshots"))
 }
 
 java {
@@ -53,10 +63,3 @@ java {
     }
 }
 
-testFixtures {
-    from(":baseServices")
-    from(":files")
-    from(":messaging")
-    from(":snapshots")
-    from(":core")
-}

@@ -30,6 +30,7 @@ dependencies {
     runtimeOnly(library("slf4j_api"))
 
     testImplementation(project(":launcherBootstrap"))
+    testImplementation(project(":internalIntegTesting"))
     testImplementation(project(":launcherStartup"))
     testImplementation(project(":native"))
     testImplementation(project(":cli"))
@@ -46,6 +47,15 @@ dependencies {
     testImplementation(library("guava"))
     testImplementation(library("ant"))
 
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":languageJava")))
+    testImplementation(testFixtures(project(":messaging")))
+    testImplementation(testFixtures(project(":logging")))
+    testImplementation(testFixtures(project(":toolingApi")))
+
+    testRuntimeOnly(project(":runtimeApiInfo"))
+    testRuntimeOnly(project(":kotlinDsl"))
+
     integTestImplementation(project(":persistentCache"))
     integTestImplementation(project(":internalIntegTesting"))
     integTestImplementation(library("slf4j_api"))
@@ -55,6 +65,9 @@ dependencies {
     integTestRuntimeOnly(project(":plugins"))
     integTestRuntimeOnly(project(":languageNative"))
 
+    testFixturesApi(project(":baseServices")) {
+        because("Test fixtures export the Action class")
+    }
     testFixturesImplementation(project(":internalTesting"))
     testFixturesImplementation(project(":internalIntegTesting"))
 }
@@ -79,14 +92,6 @@ if (currentJavaInstallation.javaVersion.isJava8) {
 
 gradlebuildJava {
     moduleType = ModuleType.STARTUP
-}
-
-testFixtures {
-    from(":core")
-    from(":languageJava")
-    from(":messaging")
-    from(":logging")
-    from(":toolingApi")
 }
 
 val integTestTasks: DomainObjectCollection<IntegrationTest> by extra

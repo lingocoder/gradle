@@ -41,22 +41,25 @@ dependencies {
     implementation(library("jatl"))
 
     testImplementation(project(":processServices"))
+    testImplementation(testFixtures(project(":core")))
+    testImplementation(testFixtures(project(":dependencyManagement")))
+    testImplementation(testFixtures(project(":logging")))
+
+    testRuntimeOnly(project(":runtimeApiInfo"))
 
     integTestImplementation(testLibrary("jsoup"))
     integTestImplementation(testLibrary("jetty"))
 
+    testFixturesApi(testFixtures(project(":platformNative")))
+    testFixturesImplementation(project(":baseServices"))
+    testFixturesImplementation(project(":internalTesting"))
     testFixturesImplementation(project(":internalIntegTesting"))
+    testFixturesImplementation(library("guava"))
 
     integTestRuntimeOnly(project(":plugins"))
     integTestRuntimeOnly(project(":platformNative"))
     integTestRuntimeOnly(project(":languageNative"))
-}
 
-testFixtures {
-    from(":core")
-    from(":dependencyManagement")
-    from(":platformNative", "testFixtures")
-    from(":logging")
 }
 
 gradlebuildJava {

@@ -38,10 +38,17 @@ dependencies {
     implementation(library("commons_lang"))
     implementation(library("asm"))
 
+    testFixturesApi(testFixtures(project(":diagnostics")))
+    testFixturesApi(testFixtures(project(":core")))
+    testFixturesImplementation(project(":internalTesting"))
     testFixturesImplementation(project(":internalIntegTesting"))
+    testFixturesImplementation(library("guava"))
 
     testImplementation(project(":processServices"))
     testImplementation(project(":files"))
+    testImplementation(testFixtures(project(":coreApi")))
+
+    testRuntimeOnly(project(":runtimeApiInfo"))
 
     integTestImplementation(project(":platformBase"))
     
@@ -50,12 +57,6 @@ dependencies {
 
 gradlebuildJava {
     moduleType = ModuleType.CORE
-}
-
-testFixtures {
-    from(":core", "testFixtures")
-    from(":coreApi")
-    from(":diagnostics", "testFixtures")
 }
 
 classycle {
