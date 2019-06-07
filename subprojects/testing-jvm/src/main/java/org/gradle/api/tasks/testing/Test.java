@@ -456,6 +456,13 @@ public class Test extends AbstractTestTask implements JavaForkOptions, PatternFi
 
     // TODO document
     // TODO should we move the declaration to the interface
+
+    /**
+     * TODO document.
+     *
+     * @since 5.6
+     */
+    @Incubating
     public void setDebugOptions(String debugOptions) {
         forkOptions.setDebugOptions(debugOptions);
     }

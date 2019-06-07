@@ -226,9 +226,11 @@ public interface JavaForkOptions extends ProcessForkOptions {
     void setDebug(boolean enabled);
 
     /**
-     * TODO (donat) document debug options
-     * @param debugOptions
+     * TODO document.
+     *
+     * @since 5.6
      */
+    @Incubating
     void setDebugOptions(String debugOptions);
 
     /**

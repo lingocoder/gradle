@@ -16,8 +16,8 @@
 
 package org.gradle.tooling;
 
+import org.gradle.api.Incubating;
 import org.gradle.tooling.events.test.TestOperationDescriptor;
-import org.gradle.tooling.model.UnsupportedMethodException;
 
 /**
  *
@@ -90,6 +90,7 @@ public interface TestLauncher extends ConfigurableLauncher<TestLauncher> {
      *
      * @since 5.6
      */
+    @Incubating
     TestLauncher withDebugOptions(int port);
 
     /**
