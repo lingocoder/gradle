@@ -36,7 +36,7 @@ enum JavaTestProject {
         [assemble: productionFile('largeJavaMultiProject'), test: productionFile('largeJavaMultiProject', 450, 2250, 45000)]
     ),
     HUGE_JAVA_MULTI_PROJECT(
-        "largeJavaMultiProject", GROOVY, 500, 500, '1536m', '1g',
+        "hugeJavaMultiProject", GROOVY, 500, 500, '1536m', '1g',
         [assemble: productionFile('largeJavaMultiProject'), test: productionFile('largeJavaMultiProject', 450, 2250, 45000)]
     ),
     LARGE_JAVA_MULTI_PROJECT_KOTLIN_DSL(
