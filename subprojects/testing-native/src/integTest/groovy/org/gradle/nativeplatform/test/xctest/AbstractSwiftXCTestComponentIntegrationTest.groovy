@@ -47,6 +47,20 @@ abstract class AbstractSwiftXCTestComponentIntegrationTest extends AbstractSwift
         outputContains("'${componentName}' component in project ':' does not target this operating system.")
     }
 
+    def "does not compile and link LinuxMain.swift on macOS"() {
+        given:
+        makeSingleProject()
+        componentUnderTest.writeToProject(testDirectory)
+        settingsFile << "rootProject.name = '${componentUnderTest.projectName}'"
+
+        and:
+        file("src/test/swift/LinuxMain.swift") << "broken!"
+
+        expect:
+        succeeds taskNameToAssembleDevelopmentBinary
+        result.assertTasksExecutedAndNotSkipped(tasksToAssembleDevelopmentBinaryOfComponentUnderTest, ":$taskNameToAssembleDevelopmentBinary")
+    }
+
     @Override
     protected String getComponentUnderTestDsl() {
         return "xctest"
@@ -86,4 +100,6 @@ abstract class AbstractSwiftXCTestComponentIntegrationTest extends AbstractSwift
     String getComponentName() {
         return "test"
     }
+
+    protected abstract XCTestSourceElement getComponentUnderTest()
 }

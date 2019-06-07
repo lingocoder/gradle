@@ -29,6 +29,7 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.provider.SetProperty;
+import org.gradle.api.tasks.Sync;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -198,6 +199,19 @@ public class XCTestConventionPlugin implements Plugin<Project> {
                 File frameworkDir = new File(sdkPlatformPathLocator.find(), "Developer/Library/Frameworks");
                 return Arrays.asList("-parse-as-library", "-F" + frameworkDir.getAbsolutePath());
             }));
+            // Overwrite the source to exclude `LinuxMain.swift`
+            compile.getSource().setFrom(binary.getSwiftSource().getAsFileTree().matching(patterns -> patterns.exclude("**/LinuxMain.swift")));
+
+            // Rename `LinuxMain.swift` to `main.swift` so the entry point is correctly detected by swiftc
+            if (binary.getTargetMachine().getOperatingSystemFamily().isLinux()) {
+                TaskProvider<Sync> renameLinuxMainTask = tasks.register("renameLinuxMain", Sync.class, task -> {
+                    task.from(binary.getSwiftSource());
+                    task.into(task.getTemporaryDir());
+                    task.include("LinuxMain.swift");
+                    task.rename(it -> "main.swift");
+                });
+                compile.getSource().from(renameLinuxMainTask);
+            }
 
             // Add a link task
             final TaskProvider<LinkMachOBundle> link = tasks.register(names.getTaskName("link"), LinkMachOBundle.class, task -> {

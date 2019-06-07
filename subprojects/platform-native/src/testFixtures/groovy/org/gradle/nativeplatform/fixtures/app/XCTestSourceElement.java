@@ -70,7 +70,7 @@ public abstract class XCTestSourceElement extends SwiftSourceElement implements 
         }
         content.append("])\n");
 
-        return new SourceFile("swift", "main.swift", content.toString());
+        return new SourceFile("swift", "LinuxMain.swift", content.toString());
     }
 
     @Override
