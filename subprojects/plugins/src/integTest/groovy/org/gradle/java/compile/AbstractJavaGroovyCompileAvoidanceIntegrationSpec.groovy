@@ -211,21 +211,6 @@ include 'a', 'b'
         executedAndNotSkipped ":a:${language.compileTaskName}", ":b:${language.compileTaskName}"
 
         when:
-        // add public constructor to replace the default, should not change
-        sourceFile.text = """
-            public class ToolImpl { 
-                public ToolImpl() { }
-                public static ToolImpl instance; 
-                public void execute() { String s = toString(); } 
-            }
-"""
-
-        then:
-        succeeds ":b:${language.compileTaskName}"
-        executedAndNotSkipped ":a:${language.compileTaskName}"
-        skipped ":b:${language.compileTaskName}"
-
-        when:
         // add public constructor, should change
         sourceFile.text = """
             public class ToolImpl { 
@@ -295,6 +280,7 @@ public class ToolImpl {
         sourceFile << """
             public class ToolImpl {
                 public Object s = String.valueOf(12);
+                public ToolImpl() { }
                 public void execute() { int i = 12; }
             }
         """
@@ -314,22 +300,7 @@ public class ToolImpl {
         sourceFile.text = """
             public class ToolImpl {
                 public Object s = "12";
-                public void execute() { String s = toString(); }
-            }
-"""
-
-        then:
-        succeeds ":b:${language.compileTaskName}"
-        executedAndNotSkipped ":a:${language.compileTaskName}"
-        skipped ":b:${language.compileTaskName}"
-
-        when:
-        // add static initializer and constructor
-        sourceFile.text = """
-            public class ToolImpl {
-                static { }
                 public ToolImpl() { }
-                public Object s = "12";
                 public void execute() { String s = toString(); }
             }
 """
